@@ -20,19 +20,29 @@ def get_url_from_args(url: str, branch: str, path: str) -> str:
 
 def parse_args(config) -> confuse.Configuration:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("-u", "--url", default=config["repository"].get(), help="Git repository URL")
-    parser.add_argument("-b", "--branch", default=config["branch"].get("str"), help="Git branch")
-    parser.add_argument("-p", "--path", default=config["path"].get(), help="Path inside the git repository")
-    default_replace = config["replace_existing"].get(bool)
-    parser.add_argument(
-        "-f", "--replace-existing", default=default_replace, action="store_true", help="Replace the existing file?"
-    )
-    parser.add_argument("--no-replace-existing", dest="replace_existing", action="store_false")
-    default_verbose = config["verbose"].get(bool)
-    parser.add_argument(
-        "-v", "--verbose", default=default_verbose, action="store_true", help="Display additional information?"
-    )
-    parser.add_argument("--no-verbose", dest="verbose", action="store_false")
+    sub_parser = parser.add_subparsers()
+    install = sub_parser.add_parser("install", help="Install the configuration from a server")
+    install_parse_args(config, install)
+    configu = sub_parser.add_parser("set-conf", help="Permit to set the configuration")
+    auto_apply = sub_parser.add_parser("auto-apply", help="Apply all the possible automatic tools.")
     args = parser.parse_args()
     config.set_args(args)
     return config
+
+
+def install_parse_args(config, install):
+    install.add_argument("-u", "--url", default=config["repository"].get(), help="Git repository URL")
+    install.add_argument("-b", "--branch", default=config["branch"].get("str"), help="Git branch")
+    install.add_argument("-p", "--path", default=config["path"].get(), help="Path inside the git repository")
+    default_files = config["configuration_files"].get(list)
+    install.add_argument("-c", "--configuration-files", nargs="+", default=default_files, help="Files to recover")
+    default_replace = config["replace_existing"].get(bool)
+    install.add_argument(
+        "-f", "--replace-existing", default=default_replace, action="store_true", help="Replace the existing file?"
+    )
+    install.add_argument("--no-replace-existing", dest="replace_existing", action="store_false")
+    default_verbose = config["verbose"].get(bool)
+    install.add_argument(
+        "-v", "--verbose", default=default_verbose, action="store_true", help="Display additional information?"
+    )
+    install.add_argument("--no-verbose", dest="verbose", action="store_false")
