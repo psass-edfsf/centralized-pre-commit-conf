@@ -1,30 +1,60 @@
 repos:
-- repo: https://github.com/hakancelik96/unimport
-  rev: 0.2.10
-  hooks:
-      - id: unimport
-        args: [ -r ]
-        files: "\\.(py)$"
+-   repo: https://github.com/myint/autoflake
+    rev: v1.4
+    hooks:
+    -   id: autoflake
+        args:
+            - --in-place
+            - --remove-all-unused-imports
+            - --expand-star-imports
+            - --remove-duplicate-keys
+            - --remove-unused-variables
 -   repo: https://github.com/PyCQA/isort
-    rev: 5.5.2
+    rev: 5.7.0
     hooks:
     -   id: isort
+-   repo: https://github.com/asottile/pyupgrade
+    rev: v2.10.0
+    hooks:
+    -   id: pyupgrade
+-   repo: https://github.com/asottile/blacken-docs
+    rev: v1.9.2
+    hooks:
+    -   id: blacken-docs
+        additional_dependencies: [black==20.8b1]
 -   repo: https://github.com/ambv/black
     rev: 20.8b1
     hooks:
     - id: black
       args: [--safe, --quiet, --line-length=120]
+- repo: https://github.com/dfm/black_nbconvert
+  rev: v0.2.0
+  hooks:
+  - id: black_nbconvert
+- repo: https://github.com/kynan/nbstripout
+  rev: 0.3.9
+  hooks:
+    - id: nbstripout
+- repo: https://github.com/nbQA-dev/nbQA
+  # Apply isort to notebook imports
+  rev: 0.5.7
+  hooks:
+    - id: nbqa-isort
+      args: [--nbqa-mutate]
 -   repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v2.2.3
+    rev: v3.4.0
     hooks:
     -   id: check-merge-conflict
     -   id: trailing-whitespace
     -   id: end-of-file-fixer
     -   id: check-json
     -   id: check-yaml
+    -   id: check-ast
     -   id: check-xml
-    -   id: flake8
-        args: [--config=.flake8]
+- repo: https://gitlab.com/pycqa/flake8
+  rev: 3.8.4
+  hooks:
+    - id: flake8
 -   repo: local
     hooks:
     -   id: pylint
@@ -33,7 +63,7 @@ repos:
         language: system
         types: [python]
 -   repo: https://github.com/pre-commit/mirrors-mypy
-    rev: v0.770
+    rev: v0.800
     hooks:
     -   id: mypy
         name: mypy
@@ -44,7 +74,7 @@ repos:
         require_serial: true
         additional_dependencies: []
 -   repo: https://github.com/igorshubovych/markdownlint-cli
-    rev: v0.23.2
+    rev: v0.26.0
     hooks:
     -   id: markdownlint
         name: markdownlint
